@@ -1,0 +1,30 @@
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+// ============================================================================
+// PRIVACY MODEL
+// ============================================================================
+// PUBLIC (on-chain): `count` and `last_increment_accepted`.
+// PRIVATE (witness, never stored or disclosed): `secret_increment`.
+// PROVED WITHOUT REVEALING: the caller proves the private increment is positive.
+// The public count advances by one per accepted proof, so it does not reveal the
+// private increment amount.
+// ============================================================================
+
+export ledger count: Counter;
+export ledger last_increment_accepted: Boolean;
+
+witness secret_increment(): Uint<64>;
+
+export circuit increment(): [] {
+  const amount = secret_increment();
+
+  assert(amount > 0, "Increment must be strictly positive");
+
+  // Deliberate disclosure: only the acceptance result is made public.
+  last_increment_accepted = disclose(true);
+
+  // Public state changes without revealing `amount`.
+  count.increment(1);
+}
