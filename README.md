@@ -2,6 +2,10 @@
 
 > A privacy-preserving counter smart contract on the Midnight Network that allows users to increment a public counter without revealing the amount they are adding.
 
+## Live Demo
+
+https://obscura-sandy.vercel.app
+
 ## Contract Address
 
 | Network | Address                                                            |
@@ -23,6 +27,10 @@ Obscura is a Zero-Knowledge smart contract that maintains a public `count` on th
 - **PROVED WITHOUT REVEALING:**
   - The user proves they know a `secret_increment` that is strictly greater than zero, and that the new count is the old count plus this secret, without ever revealing the secret itself.
 
+## Privacy Claim
+
+An on-chain observer can see the updated public `count` and the hash of the increment, but they absolutely cannot see the actual `secret_increment` value provided by the user.
+
 ## Tech Stack
 
 - Midnight Network
@@ -39,11 +47,25 @@ Obscura is a Zero-Knowledge smart contract that maintains a public `count` on th
 
 ## Setup
 
-1. Clone the repository and navigate to the project folder.
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+```bash
+# clone
+git clone https://github.com/Abdulazeez41/Obscura.git
+
+# folder directory
+cd Obscura
+
+npm run compile
+
+# Test
+npm test
+
+# Deploy
+NODE_OPTIONS="--max-old-space-size=12288" npm run deploy -- --network preview
+```
+
+## Demo Video
+
+[PLACEHOLDER — I will add the link after recording]
 
 ## Initial Idea
 
