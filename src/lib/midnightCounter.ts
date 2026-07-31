@@ -13,6 +13,8 @@ import * as Counter from "../../managed/counter/contract/index.js";
 const CONTRACT_ADDRESS =
   "a46329618ce28a45479b5d0070874da5c9e61f53c67f59c576247410477a1dff";
 
+const decodedContractAddress = ledger.decodeContractAddress(CONTRACT_ADDRESS);
+
 const PRIVATE_STATE_ID = "obscura-counter-private-state";
 
 const privateStates = new Map<string, unknown>();
@@ -81,7 +83,7 @@ export async function incrementCounter(connectedApi: ConnectedAPI) {
 
   const walletProvider = {
     getCoinPublicKey: () =>
-      shielded.shieldedCoinPublicKey as unknown as ledger.CoinPublicKey,
+      ledger.decodeCoinPublicKey(shielded.shieldedCoinPublicKey),
 
     getEncryptionPublicKey: () =>
       shielded.shieldedEncryptionPublicKey as unknown as ledger.EncPublicKey,
@@ -132,7 +134,7 @@ export async function incrementCounter(connectedApi: ConnectedAPI) {
   const callTx = createCircuitCallTxInterface(
     providers as any,
     compiledContract as any,
-    CONTRACT_ADDRESS as any,
+    decodedContractAddress,
     PRIVATE_STATE_ID,
   );
 
