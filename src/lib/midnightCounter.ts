@@ -13,7 +13,17 @@ import * as Counter from "../../managed/counter/contract/index.js";
 const CONTRACT_ADDRESS =
   "a46329618ce28a45479b5d0070874da5c9e61f53c67f59c576247410477a1dff";
 
-const decodedContractAddress = ledger.decodeContractAddress(CONTRACT_ADDRESS);
+function hexToBytes(hex: string): Uint8Array {
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < hex.length; i += 2) {
+    bytes[i / 2] = parseInt(hex.substr(i, 2), 16);
+  }
+  return bytes;
+}
+
+const decodedContractAddress = ledger.decodeContractAddress(
+  hexToBytes(CONTRACT_ADDRESS),
+);
 
 const PRIVATE_STATE_ID = "obscura-counter-private-state";
 
