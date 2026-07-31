@@ -125,6 +125,10 @@ export async function incrementCounter(connectedApi: ConnectedAPI) {
     midnightProvider,
   };
 
+  if (!privateStates.has(PRIVATE_STATE_ID)) {
+    privateStates.set(PRIVATE_STATE_ID, {});
+  }
+
   const callTx = createCircuitCallTxInterface(
     providers as any,
     compiledContract as any,
