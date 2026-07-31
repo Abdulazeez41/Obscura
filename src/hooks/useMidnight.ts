@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
+import {
+  createContext,
+  createElement,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 import { setNetworkId } from "@midnight-ntwrk/midnight-js-network-id";
 import type {
   ConnectedAPI,
@@ -56,7 +64,7 @@ function toErrorMessage(error: unknown): string {
   return message || "Unable to connect to the selected wallet.";
 }
 
-export function useMidnight() {
+function useMidnightState() {
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -139,4 +147,21 @@ export function useMidnight() {
     disconnectWallet,
     refreshWallets,
   };
+}
+
+export type MidnightContextValue = ReturnType<typeof useMidnightState>;
+
+const MidnightContext = createContext<MidnightContextValue | null>(null);
+
+export function MidnightProvider({ children }: { children: ReactNode }) {
+  const midnight = useMidnightState();
+  return createElement(MidnightContext.Provider, { value: midnight }, children);
+}
+
+export function useMidnight(): MidnightContextValue {
+  const midnight = useContext(MidnightContext);
+  if (!midnight) {
+    throw new Error("useMidnight must be used within MidnightProvider.");
+  }
+  return midnight;
 }

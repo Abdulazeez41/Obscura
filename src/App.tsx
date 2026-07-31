@@ -1,23 +1,22 @@
-import React from 'react';
-import { WalletConnect } from './components/WalletConnect';
-import { CircuitCall } from './components/CircuitCall';
+import { WalletConnect } from "./components/WalletConnect";
+import { CircuitCall } from "./components/CircuitCall";
+import { MidnightProvider } from "./hooks/useMidnight";
 
-function App() {
+export default function App() {
   return (
-    <div style={{ 
-      maxWidth: '800px', 
-      margin: '40px auto', 
-      padding: '20px',
-      fontFamily: 'system-ui, -apple-system, sans-serif'
-    }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '40px', color: '#333' }}>
-        Obscura - Privacy Counter
-      </h1>
-      
-      <WalletConnect />
-      <CircuitCall />
-    </div>
+    <main
+      style={{
+        maxWidth: 800,
+        margin: "40px auto",
+        padding: 20,
+        fontFamily: "system-ui, sans-serif",
+      }}
+    >
+      <h1>Obscura - Privacy Counter</h1>
+      <MidnightProvider>
+        <WalletConnect />
+        <CircuitCall />
+      </MidnightProvider>
+    </main>
   );
 }
-
-export default App;
