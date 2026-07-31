@@ -65,7 +65,7 @@ NODE_OPTIONS="--max-old-space-size=12288" npm run deploy -- --network preview
 
 ## Demo Video
 
-[PLACEHOLDER — I will add the link after recording]
+[PLACEHOLDER - I will add the link after recording]
 
 ## Initial Idea
 

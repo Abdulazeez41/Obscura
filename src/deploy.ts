@@ -104,7 +104,7 @@ const compiledContract = CompiledContract.make(
 
 async function createProviders(walletCtx: WalletContext) {
   // The SDK requires the private-state password to be at least 16 characters.
-  // The default below is a placeholder for local devnet only — set a strong
+  // The default below is a placeholder for local devnet only - set a strong
   // password via PRIVATE_STATE_PASSWORD when you move to a non-local target.
   const privateStatePassword =
     process.env.PRIVATE_STATE_PASSWORD?.trim() ||
@@ -112,7 +112,7 @@ async function createProviders(walletCtx: WalletContext) {
 
   const walletProvider = {
     // In Midnight.js 4.1.x the WalletProvider interface returns the key objects
-    // (CoinPublicKey / EncPublicKey) directly — no longer hex strings.
+    // (CoinPublicKey / EncPublicKey) directly - no longer hex strings.
     getCoinPublicKey: () => walletCtx.shieldedSecretKeys.coinPublicKey,
     getEncryptionPublicKey: () =>
       walletCtx.shieldedSecretKeys.encryptionPublicKey,
@@ -178,7 +178,7 @@ async function main() {
   ).length;
   if (restoredCount > 0) {
     console.log(
-      `  Restored ${restoredCount}/3 child wallets from .midnight-wallet-state — sync will resume from saved point.`,
+      `  Restored ${restoredCount}/3 child wallets from .midnight-wallet-state - sync will resume from saved point.`,
     );
   }
 
@@ -256,7 +256,7 @@ async function main() {
           console.log(`  Address: ${address}`);
           console.log(`  Faucet:  ${networkConfig.faucet}`);
           console.log(
-            "  Re-run setup after funding — your seed is preserved.\n",
+            "  Re-run setup after funding - your seed is preserved.\n",
           );
           await walletCtx.wallet.stop();
           process.exit(1);
@@ -283,7 +283,7 @@ async function main() {
       `  Registering ${unregisteredUtxos.length} NIGHT UTXOs for DUST generation...`,
     );
     // The signDustRegistration callback (3rd arg) already produces a recipe
-    // with N signatures matching N inputs. Do NOT call signRecipe again — that
+    // with N signatures matching N inputs. Do NOT call signRecipe again - that
     // would double-sign and the chain rejects with InputsSignaturesLengthMismatch
     // (Custom error 192). Matches upstream example-counter and example-bboard.
     const recipe = await walletCtx.wallet.registerNightUtxosForDustGeneration(
@@ -342,7 +342,7 @@ async function main() {
   // Fallback timing. The 6s pre-pause above handles the common case; this
   // loop covers genuine outliers (slow blocks, proof-server worker-pool
   // settling). Earlier 2s retries caused CI flakes where attempt 2's /prove
-  // hit the proof-server before it had drained attempt 1's state — 5s gives
+  // hit the proof-server before it had drained attempt 1's state - 5s gives
   // it room to settle between attempts. 20 × 5 = 100s total budget.
   const MAX_RETRIES = 20;
   const RETRY_DELAY_MS = 5000;
@@ -351,7 +351,7 @@ async function main() {
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
       // Midnight.js 4.1.x supplies private state via privateStateId +
-      // initialPrivateState (empty here — the counter contract has no
+      // initialPrivateState (empty here - the counter contract has no
       // witnesses). args is the contract constructor's arguments: empty for
       // counter's no-arg constructor. (Statically-typed contracts can omit
       // args entirely; this script loads the contract dynamically, so the
@@ -367,7 +367,7 @@ async function main() {
       const errCause = err?.cause?.message || err?.cause?.toString() || "";
       const fullError = `${errMsg} ${errCause}`;
 
-      // DUST shortage is the most common transient failure on a fresh devnet —
+      // DUST shortage is the most common transient failure on a fresh devnet -
       // check it BEFORE proof-server connectivity, because dust-balancing errors
       // can surface through proof-server-shaped messages (the wallet talks to
       // the proof-server while building the dust portion of the tx).

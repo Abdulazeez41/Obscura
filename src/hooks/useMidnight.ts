@@ -1,50 +1,78 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+export interface WalletInfo {
+  name: string;
+  id: string;
+  api: any;
+}
 
 export function useMidnight() {
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [availableWallets, setAvailableWallets] = useState<WalletInfo[]>([]);
 
-  const connectWallet = async () => {
-    console.log("🔵 [DEBUG] Connect button was clicked!");
+  useEffect(() => {
+    // Scan for available wallets after a short delay to ensure extensions have injected
+    const timer = setTimeout(() => {
+      const cardano = (window as any).cardano;
+      if (cardano) {
+        const wallets: WalletInfo[] = [];
+        // Check common wallet IDs (add more as needed)
+        const walletIds = [
+          "lace",
+          "eternl",
+          "nami",
+          "oneam",
+          "gerowallet",
+          "begin",
+        ];
 
+        walletIds.forEach((id) => {
+          if (cardano[id]) {
+            wallets.push({
+              name: cardano[id].name || id.toUpperCase(),
+              id: id,
+              api: cardano[id],
+            });
+          }
+        });
+        setAvailableWallets(wallets);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const connectWallet = async (walletId: string) => {
     try {
       setError(null);
-
       const cardano = (window as any).cardano;
-      console.log("🔵 [DEBUG] window.cardano object:", cardano);
 
-      if (!cardano) {
+      if (!cardano || !cardano[walletId]) {
         throw new Error(
-          "No Cardano wallet detected. Please install a wallet like Lace or Eternl.",
+          `${walletId} wallet not found. Please install the extension.`,
         );
       }
 
-      if (!cardano.lace) {
-        throw new Error(
-          "Lace wallet not detected. Please ensure the Lace extension is installed, enabled, and the page is refreshed.",
-        );
-      }
-
-      console.log("🔵 [DEBUG] Attempting to enable Lace API...");
-      const api = await cardano.lace.enable();
-      console.log("🔵 [DEBUG] Lace API enabled successfully:", api);
+      console.log(`🔵 [DEBUG] Attempting to enable ${walletId} API...`);
+      const api = await cardano[walletId].enable();
+      console.log(`🔵 [DEBUG] ${walletId} API enabled successfully`);
 
       const addresses = await api.getUsedAddresses();
-      console.log("🔵 [DEBUG] Addresses found in wallet:", addresses);
+      console.log(`🔵 [DEBUG] Addresses found:`, addresses);
 
       if (addresses && addresses.length > 0) {
-        const hexAddress = addresses[0];
-        setWalletAddress(hexAddress);
+        setWalletAddress(addresses[0]);
         setIsConnected(true);
-        console.log("🟢 [DEBUG] Wallet connected successfully!");
+        console.log(`🟢 [DEBUG] Wallet connected successfully!`);
       } else {
         throw new Error(
-          "No addresses found. Please open your Lace wallet and ensure it is initialized/funded.",
+          "No addresses found. Please ensure your wallet is initialized and funded.",
         );
       }
     } catch (err: any) {
-      console.error("🔴 [DEBUG] Wallet connection failed with error:", err);
+      console.error(`🔴 [DEBUG] ${walletId} connection failed:`, err);
       setError(err.message || "Failed to connect wallet");
       setIsConnected(false);
     }
@@ -61,6 +89,7 @@ export function useMidnight() {
     walletAddress,
     isConnected,
     error,
+    availableWallets,
     connectWallet,
     disconnectWallet,
   };
