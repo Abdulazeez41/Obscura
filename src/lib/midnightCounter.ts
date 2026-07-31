@@ -92,12 +92,27 @@ export async function incrementCounter(connectedApi: ConnectedAPI) {
         );
 
   const walletProvider = {
-    getCoinPublicKey: () =>
-      ledger.decodeCoinPublicKey(shielded.shieldedCoinPublicKey),
+    getCoinPublicKey: () => {
+      const key = shielded.shieldedCoinPublicKey;
+      
+      if (typeof key === 'string') {
+        const cleanHex = key.startsWith('0x') ? key.slice(2) : key;
+        const rawHex = cleanHex.length === 80 ? cleanHex.slice(-64) : cleanHex;
+        return ledger.decodeCoinPublicKey(rawHex);
+      }
 
+      if (key instanceof Uint8Array) {
+        // If it's 40 bytes, take the last 32 bytes
+        const rawKey = key.length === 40 ? key.slice(-32) : key;
+        return ledger.decodeCoinPublicKey(rawKey);
+      }
+      
+      throw new Error('Unsupported CoinPublicKey format');
+    },
+    
     getEncryptionPublicKey: () =>
       shielded.shieldedEncryptionPublicKey as unknown as ledger.EncPublicKey,
-
+      
     async balanceTx(
       tx: ledger.Transaction<
         ledger.SignatureEnabled,
@@ -109,7 +124,6 @@ export async function incrementCounter(connectedApi: ConnectedAPI) {
         toHex(tx.serialize()),
         {},
       );
-
       return ledger.Transaction.deserialize<
         ledger.SignatureEnabled,
         ledger.Proof,
