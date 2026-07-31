@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "type": "module",
   "description": "A Midnight Network application created with create-mn-app",
-  "author": "",
   "license": "MIT",
   "scripts": {
     "compile": "compact compile contracts/counter.compact managed/counter",
@@ -17,11 +16,12 @@
     "network": "npx tsx src/network.ts",
     "proof-server:start": "docker compose up -d",
     "proof-server:stop": "docker compose down",
-    "clean": "rm -rf contracts/managed .midnight-state.json .midnight-wallet-state",
+    "clean": "rm -rf managed .midnight-state.json .midnight-wallet-state",
     "test:e2e": "tsx scripts/e2e-check.ts"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-runtime": "0.16.0",
+    "@midnight-ntwrk/dapp-connector-api": "^4.0.1",
     "@midnight-ntwrk/midnight-js-contracts": "4.1.1",
     "@midnight-ntwrk/midnight-js-http-client-proof-provider": "4.1.1",
     "@midnight-ntwrk/midnight-js-indexer-public-data-provider": "4.1.1",
@@ -50,11 +50,5 @@
   },
   "engines": {
     "node": ">=22.0.0"
-  },
-  "keywords": [
-    "midnight",
-    "blockchain",
-    "zero-knowledge",
-    "privacy"
-  ]
+  }
 }
